@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: matt <mattysak.yt@gmail.com>
+Date: Mon, 5 Oct 2026 18:39:36 +0200
+Subject: [PATCH] add log-join-location option
+
+
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index e9e95256e..b7864f6ce 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -296,7 +296,11 @@ public abstract class PlayerList {
+         this.server.notificationManager().playerJoined(player);
+         servergamepacketlistenerimpl.resumeFlushing();
+         // CraftBukkit - Moved from above, added world
+-        PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", player.getPlainTextName(), s1, player.getId(), serverlevel.serverLevelData.getLevelName(), player.getX(), player.getY(), player.getZ());
++        if (org.spigotmc.SpigotConfig.logJoinLocation) {
++            PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", player.getPlainTextName(), s1, player.getId(), serverlevel.serverLevelData.getLevelName(), player.getX(), player.getY(), player.getZ());
++        } else {
++            PlayerList.LOGGER.info("{}[{}] logged in", player.getPlainTextName(), s1);
++        }
+     }
+ 
+     public void updateEntireScoreboard(ServerScoreboard scoreboard, ServerPlayer player) {
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index b438bfde8..2b4948f0a 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -320,6 +320,12 @@ public class SpigotConfig
+         saveUserCacheOnStopOnly = getBoolean( "settings.save-user-cache-on-stop-only", false );
+     }
+ 
++    public static boolean logJoinLocation;
++    private static void logJoinLocation()
++    {
++        logJoinLocation = getBoolean( "settings.log-join-location", true );
++    }
++
+     public static double movedWronglyThreshold;
+     private static void movedWronglyThreshold()
+     {
