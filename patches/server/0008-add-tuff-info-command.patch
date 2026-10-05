@@ -1,16 +1,28 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: calvin <rukivverh@duck.com>
 Date: Mon, 5 Oct 2026 19:02:38 +0200
-Subject: [PATCH] add paperspigot info command
+Subject: [PATCH] add tuff info command
 
 
-diff --git a/src/main/java/org/paperspigot/InfoCommand.java b/src/main/java/org/paperspigot/InfoCommand.java
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 2b4948f0a..e54be5b75 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -70,6 +70,7 @@ public class SpigotConfig
+ 
+         commands = new HashMap<String, Command>();
+         commands.put( "spigot", new SpigotCommand( "spigot" ) );
++        commands.put( "tuff", new org.tuff.InfoCommand( "tuff" ) );
+ 
+         version = getInt( "config-version", 12 );
+         set( "config-version", 12 );
+diff --git a/src/main/java/org/tuff/InfoCommand.java b/src/main/java/org/tuff/InfoCommand.java
 new file mode 100644
-index 000000000..960380fde
+index 000000000..53076011a
 --- /dev/null
-+++ b/src/main/java/org/paperspigot/InfoCommand.java
++++ b/src/main/java/org/tuff/InfoCommand.java
 @@ -0,0 +1,54 @@
-+package org.paperspigot;
++package org.tuff;
 +
 +import java.lang.management.ManagementFactory;
 +import java.util.Arrays;
@@ -28,9 +40,9 @@ index 000000000..960380fde
 +    {
 +        super( name );
 +        this.description = "Shows server version, uptime, tps and memory";
-+        this.usageMessage = "/paperspigot";
++        this.usageMessage = "/tuff";
 +        this.setAliases( Arrays.asList( "jules" ) );
-+        this.setPermission( "paperspigot.command.info" );
++        this.setPermission( "tuff.command.info" );
 +    }
 +
 +    @Override
@@ -64,15 +76,3 @@ index 000000000..960380fde
 +        return ( minutes / 1440 ) + "d " + ( ( minutes / 60 ) % 24 ) + "h " + ( minutes % 60 ) + "m";
 +    }
 +}
-diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
-index 2b4948f0a..9f4c48a81 100644
---- a/src/main/java/org/spigotmc/SpigotConfig.java
-+++ b/src/main/java/org/spigotmc/SpigotConfig.java
-@@ -70,6 +70,7 @@ public class SpigotConfig
- 
-         commands = new HashMap<String, Command>();
-         commands.put( "spigot", new SpigotCommand( "spigot" ) );
-+        commands.put( "paperspigot", new org.paperspigot.InfoCommand( "paperspigot" ) );
- 
-         version = getInt( "config-version", 12 );
-         set( "config-version", 12 );

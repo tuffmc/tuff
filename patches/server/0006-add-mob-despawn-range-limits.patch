@@ -5,7 +5,7 @@ Subject: [PATCH] add mob despawn range limits
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ceda86c6e..790efaef3 100644
+index ceda86c6e..31a9f0e56 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
 @@ -785,14 +785,14 @@ public abstract class Mob extends LivingEntity implements Targeting, EquipmentUs
@@ -13,7 +13,7 @@ index ceda86c6e..790efaef3 100644
              if (entity != null) {
                  double d0 = entity.distanceToSqr((Entity) this);
 -                int i = this.getType().getCategory().getDespawnDistance();
-+                int i = Math.min(this.getType().getCategory().getDespawnDistance(), this.level().spigotConfig.despawnHardLimit); // PaperSpigot - cap despawn range
++                int i = Math.min(this.getType().getCategory().getDespawnDistance(), this.level().spigotConfig.despawnHardLimit); // Tuff - cap despawn range
                  int j = i * i;
  
                  if (d0 > (double) j && this.removeWhenFarAway(d0)) {
@@ -21,7 +21,7 @@ index ceda86c6e..790efaef3 100644
                  }
  
 -                int k = this.getType().getCategory().getNoDespawnDistance();
-+                int k = Math.min(this.getType().getCategory().getNoDespawnDistance(), this.level().spigotConfig.despawnSoftLimit); // PaperSpigot - cap despawn range
++                int k = Math.min(this.getType().getCategory().getNoDespawnDistance(), this.level().spigotConfig.despawnSoftLimit); // Tuff - cap despawn range
                  int l = k * k;
  
                  if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
