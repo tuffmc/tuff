@@ -5,7 +5,7 @@ set -e
 "$root/scripts/apply.sh"
 mvn=$(ls -d "$root"/work/apache-maven-*/bin/mvn | head -1)
 cd "$root/work/Spigot"
-"$mvn" -q -DskipTests clean install
+sh "$mvn" -q -DskipTests clean install
 
 mkdir -p "$root/out"
 cp Spigot-Server/target/spigot-*-bootstrap.jar "$root/out/paperspigot-$mc.jar"
