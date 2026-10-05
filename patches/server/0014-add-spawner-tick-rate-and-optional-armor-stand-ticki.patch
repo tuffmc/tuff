@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 19:24:56 +0200
+Subject: [PATCH] add spawner tick rate and optional armor stand ticking
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
+index b4714131a..21bd430f1 100644
+--- a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
++++ b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
+@@ -200,6 +200,20 @@ public class ArmorStand extends LivingEntity {
+     @Override
+     protected void doPush(Entity entity) {}
+ 
++    @Override
++    public void tick() {
++        if (!this.level().spigotConfig.armorStandsTick && this.isAtRest()) {
++            return;
++        }
++
++        super.tick();
++    }
++
++    private boolean isAtRest() {
++        return (this.onGround() || this.isNoGravity()) && this.passengers.isEmpty() && !this.isPassenger()
++                && !this.wasTouchingWater && this.getRemainingFireTicks() <= 0 && this.hurtTime <= 0;
++    }
++
+     @Override
+     protected void pushEntities() {
+         if (!this.level().spigotConfig.armorStandMinecartPush) {
+diff --git a/src/main/java/net/minecraft/world/level/BaseSpawner.java b/src/main/java/net/minecraft/world/level/BaseSpawner.java
+index 6d360e8d1..d71daebb7 100644
+--- a/src/main/java/net/minecraft/world/level/BaseSpawner.java
++++ b/src/main/java/net/minecraft/world/level/BaseSpawner.java
+@@ -89,13 +89,18 @@ public abstract class BaseSpawner {
+     }
+ 
+     public void serverTick(ServerLevel level, BlockPos pos) {
++        int rate = level.spigotConfig.spawnerTickRate;
++        if (rate > 1 && level.getGameTime() % rate != 0) {
++            return;
++        }
++
+         if (this.isNearPlayer(level, pos) && level.isSpawnerBlockEnabled()) {
+             if (this.spawnDelay == -1) {
+                 this.delay(level, pos);
+             }
+ 
+             if (this.spawnDelay > 0) {
+-                --this.spawnDelay;
++                this.spawnDelay = Math.max(0, this.spawnDelay - Math.max(1, rate));
+             } else {
+                 boolean flag = false;
+                 RandomSource randomsource = level.getRandom();
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 385e1fdcf..874987b03 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -227,6 +227,15 @@ public class SpigotWorldConfig
+         log( "Mob Despawn Range: hard " + despawnHardLimit + " / soft " + despawnSoftLimit );
+     }
+ 
++    public int spawnerTickRate = 4;
++    public boolean armorStandsTick = true;
++    private void spawnerAndStands()
++    {
++        spawnerTickRate = Math.max( 1, getInt( "ticks-per.spawner-tick-rate", spawnerTickRate ) );
++        armorStandsTick = getBoolean( "entity-settings.armor-stands.tick", armorStandsTick );
++        log( "Spawner Tick Rate: " + spawnerTickRate + " Armor Stands Tick: " + armorStandsTick );
++    }
++
+     public boolean armorStandMinecartPush;
+     private void armorStands()
+     {
