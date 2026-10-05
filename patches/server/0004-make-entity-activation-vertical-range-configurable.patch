@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 18:43:24 +0200
+Subject: [PATCH] make entity activation vertical range configurable
+
+
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 82566467a..0e3f58513 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -119,6 +119,8 @@ public class ActivationRange
+         final int animalActivationRange = level.spigotConfig.animalActivationRange;
+         final int monsterActivationRange = level.spigotConfig.monsterActivationRange;
+ 
++        final int vertical = level.spigotConfig.activationVerticalRange;
++
+         int maxRange = Math.max( monsterActivationRange, animalActivationRange );
+         maxRange = Math.max( maxRange, raiderActivationRange );
+         maxRange = Math.max( maxRange, miscActivationRange );
+@@ -132,11 +134,11 @@ public class ActivationRange
+                 continue;
+             }
+ 
+-            maxBB = player.getBoundingBox().inflate( maxRange, 256, maxRange );
+-            ActivationType.MISC.boundingBox = player.getBoundingBox().inflate( miscActivationRange, 256, miscActivationRange );
+-            ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate( raiderActivationRange, 256, raiderActivationRange );
+-            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, 256, animalActivationRange );
+-            ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, 256, monsterActivationRange );
++            maxBB = player.getBoundingBox().inflate( maxRange, vertical, maxRange );
++            ActivationType.MISC.boundingBox = player.getBoundingBox().inflate( miscActivationRange, vertical, miscActivationRange );
++            ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate( raiderActivationRange, vertical, raiderActivationRange );
++            ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, vertical, animalActivationRange );
++            ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, vertical, monsterActivationRange );
+ 
+             level.getEntities().get(maxBB, ActivationRange::activateEntity);
+         }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 2891e2537..70b6aeb85 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -199,6 +199,7 @@ public class SpigotWorldConfig
+     public int monsterActivationRange = 32;
+     public int raiderActivationRange = 48;
+     public int miscActivationRange = 16;
++    public int activationVerticalRange = 256;
+     public boolean tickInactiveVillagers = true;
+     public boolean ignoreSpectatorActivation = false;
+     private void activationRange()
+@@ -207,9 +208,10 @@ public class SpigotWorldConfig
+         monsterActivationRange = getInt( "entity-activation-range.monsters", monsterActivationRange );
+         raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
+         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
++        activationVerticalRange = Math.max( 0, getInt( "entity-activation-range.vertical-range", activationVerticalRange ) );
+         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
+         ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
+-        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
++        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Vert " + activationVerticalRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
+     }
+ 
+     public int playerTrackingRange = 48;
