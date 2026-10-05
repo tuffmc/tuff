@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 18:49:35 +0200
+Subject: [PATCH] add mob despawn range limits
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index ceda86c6e..790efaef3 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -785,14 +785,14 @@ public abstract class Mob extends LivingEntity implements Targeting, EquipmentUs
+ 
+             if (entity != null) {
+                 double d0 = entity.distanceToSqr((Entity) this);
+-                int i = this.getType().getCategory().getDespawnDistance();
++                int i = Math.min(this.getType().getCategory().getDespawnDistance(), this.level().spigotConfig.despawnHardLimit); // PaperSpigot - cap despawn range
+                 int j = i * i;
+ 
+                 if (d0 > (double) j && this.removeWhenFarAway(d0)) {
+                     this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                 }
+ 
+-                int k = this.getType().getCategory().getNoDespawnDistance();
++                int k = Math.min(this.getType().getCategory().getNoDespawnDistance(), this.level().spigotConfig.despawnSoftLimit); // PaperSpigot - cap despawn range
+                 int l = k * k;
+ 
+                 if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double) l && this.removeWhenFarAway(d0)) {
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 1cbede581..5d8e4dc5b 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -218,6 +218,15 @@ public class SpigotWorldConfig
+         log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Vert " + activationVerticalRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
+     }
+ 
++    public int despawnHardLimit = 128;
++    public int despawnSoftLimit = 32;
++    private void despawnRanges()
++    {
++        despawnHardLimit = Math.max( 1, getInt( "mob-despawn-range.hard-limit", despawnHardLimit ) );
++        despawnSoftLimit = Math.max( 1, getInt( "mob-despawn-range.soft-limit", despawnSoftLimit ) );
++        log( "Mob Despawn Range: hard " + despawnHardLimit + " / soft " + despawnSoftLimit );
++    }
++
+     public int playerTrackingRange = 48;
+     public int animalTrackingRange = 48;
+     public int monsterTrackingRange = 48;
