@@ -2,6 +2,8 @@
 
 Spigot fork for Minecraft 1.21.11, codename Jules. It sits on top of plain Spigot (Bukkit, CraftBukkit, Spigot from BuildTools), nothing from Paper.
 
+This is an independent project. It's not affiliated with SpigotMC, PaperMC, Mojang or Microsoft, so please don't ask them for support with it. Bugs and questions go in the Issues tab here, or email rukivverh@duck.com.
+
 The repo is just patches and a few scripts. The upstream code and the decompiled server get generated on your machine by BuildTools, so none of that is in here.
 
 ## Building
