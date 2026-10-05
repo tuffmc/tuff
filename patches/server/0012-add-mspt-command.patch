@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 19:21:55 +0200
+Subject: [PATCH] add mspt command
+
+
+diff --git a/src/main/java/org/paperspigot/MsptCommand.java b/src/main/java/org/paperspigot/MsptCommand.java
+new file mode 100644
+index 000000000..ab575af8d
+--- /dev/null
++++ b/src/main/java/org/paperspigot/MsptCommand.java
+@@ -0,0 +1,59 @@
++package org.paperspigot;
++
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.ChatColor;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++
++public class MsptCommand extends Command
++{
++
++    public MsptCommand(String name)
++    {
++        super( name );
++        this.description = "Shows how long recent server ticks took";
++        this.usageMessage = "/mspt";
++        this.setPermission( "paperspigot.command.mspt" );
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String currentAlias, String[] args)
++    {
++        if ( !testPermission( sender ) )
++        {
++            return true;
++        }
++
++        long total = 0;
++        long min = Long.MAX_VALUE;
++        long max = 0;
++        int count = 0;
++        for ( long nanos : MinecraftServer.getServer().getTickTimesNanos() )
++        {
++            if ( nanos <= 0 )
++            {
++                continue;
++            }
++            total += nanos;
++            min = Math.min( min, nanos );
++            max = Math.max( max, nanos );
++            count++;
++        }
++
++        if ( count == 0 )
++        {
++            sender.sendMessage( ChatColor.RED + "No tick data yet" );
++            return true;
++        }
++
++        sender.sendMessage( ChatColor.GOLD + "MSPT avg/min/max over last " + count + " ticks: "
++                + format( total / (double) count ) + ChatColor.GOLD + " / " + format( min ) + ChatColor.GOLD + " / " + format( max ) );
++        return true;
++    }
++
++    private static String format(double nanos)
++    {
++        double ms = Math.round( nanos / 10000.0 ) / 100.0;
++        return ( ( ms < 40 ) ? ChatColor.GREEN : ( ms < 50 ) ? ChatColor.YELLOW : ChatColor.RED ).toString() + ms;
++    }
++}
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 9f4c48a81..10c44fdc3 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -71,6 +71,7 @@ public class SpigotConfig
+         commands = new HashMap<String, Command>();
+         commands.put( "spigot", new SpigotCommand( "spigot" ) );
+         commands.put( "paperspigot", new org.paperspigot.InfoCommand( "paperspigot" ) );
++        commands.put( "mspt", new org.paperspigot.MsptCommand( "mspt" ) );
+ 
+         version = getInt( "config-version", 12 );
+         set( "config-version", 12 );

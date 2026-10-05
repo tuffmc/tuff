@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 19:21:55 +0200
+Subject: [PATCH] make armor stand minecart push optional
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
+index d367962cf..b4714131a 100644
+--- a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
++++ b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
+@@ -202,6 +202,10 @@ public class ArmorStand extends LivingEntity {
+ 
+     @Override
+     protected void pushEntities() {
++        if (!this.level().spigotConfig.armorStandMinecartPush) {
++            return;
++        }
++
+         for (Entity entity : this.level().getEntities(this, this.getBoundingBox(), ArmorStand.RIDABLE_MINECARTS)) {
+             if (this.distanceToSqr(entity) <= 0.2D) {
+                 entity.push((Entity) this);
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 97dc6af4c..385e1fdcf 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -227,6 +227,13 @@ public class SpigotWorldConfig
+         log( "Mob Despawn Range: hard " + despawnHardLimit + " / soft " + despawnSoftLimit );
+     }
+ 
++    public boolean armorStandMinecartPush;
++    private void armorStands()
++    {
++        armorStandMinecartPush = getBoolean( "entity-settings.armor-stands.minecart-push", false );
++        log( "Armor Stands Push Minecarts: " + armorStandMinecartPush );
++    }
++
+     public int chunkAnimalLimit = 48;
+     public int chunkMonsterLimit = 48;
+     private void entityLimits()
