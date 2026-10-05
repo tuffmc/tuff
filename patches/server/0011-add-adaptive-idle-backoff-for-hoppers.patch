@@ -1,0 +1,62 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 19:09:40 +0200
+Subject: [PATCH] add adaptive idle backoff for hoppers
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+index 5d4a0dfb1..1a311a62b 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -52,6 +52,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+     private static final Component DEFAULT_NAME = Component.translatable("container.hopper");
+     private NonNullList<ItemStack> items;
+     private int cooldownTime;
++    private int idleChecks;
+     private long tickedGameTime;
+     private Direction facing;
+ 
+@@ -151,8 +152,18 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen
+             boolean result = tryMoveItems(level, pos, state, entity, () -> {
+                 return suckInItems(level, entity);
+             });
+-            if (!result && entity.level.spigotConfig.hopperCheck > 1) {
+-                entity.setCooldown(entity.level.spigotConfig.hopperCheck);
++            if (result) {
++                entity.idleChecks = 0;
++            } else {
++                int check = entity.level.spigotConfig.hopperCheck;
++                int backoffMax = entity.level.spigotConfig.hopperIdleBackoffMax;
++                if (backoffMax > 1) {
++                    entity.idleChecks = Math.min(entity.idleChecks + 1, backoffMax);
++                    check = Math.max(check, entity.idleChecks);
++                }
++                if (check > 1) {
++                    entity.setCooldown(check);
++                }
+             }
+             // Spigot end
+         }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 1d560e47d..97dc6af4c 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -256,6 +256,7 @@ public class SpigotWorldConfig
+     public int hopperTransfer;
+     public int hopperCheck;
+     public int hopperAmount;
++    public int hopperIdleBackoffMax;
+     public boolean hopperCanLoadChunks;
+     private void hoppers()
+     {
+@@ -267,8 +268,9 @@ public class SpigotWorldConfig
+         }
+         hopperCheck = getInt( "ticks-per.hopper-check", 1 );
+         hopperAmount = getInt( "hopper-amount", 1 );
++        hopperIdleBackoffMax = Math.max( 0, getInt( "ticks-per.hopper-idle-backoff-max", 4 ) );
+         hopperCanLoadChunks = getBoolean( "hopper-can-load-chunks", false );
+-        log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount + " Hopper Can Load Chunks: " + hopperCanLoadChunks );
++        log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount + " Hopper Idle Backoff: " + hopperIdleBackoffMax + " Hopper Can Load Chunks: " + hopperCanLoadChunks );
+     }
+ 
+     public int arrowDespawnRate;
