@@ -1,0 +1,65 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 18:53:31 +0200
+Subject: [PATCH] tune default ranges and merge radii
+
+
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 5d8e4dc5b..e05f62e32 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -138,14 +138,14 @@ public class SpigotWorldConfig
+     public double itemMerge;
+     private void itemMerge()
+     {
+-        itemMerge = getDouble("merge-radius.item", 2.5 );
++        itemMerge = getDouble("merge-radius.item", 4.0 );
+         log( "Item Merge Radius: " + itemMerge );
+     }
+ 
+     public double expMerge;
+     private void expMerge()
+     {
+-        expMerge = getDouble("merge-radius.exp", 3.0 );
++        expMerge = getDouble("merge-radius.exp", 6.0 );
+         log( "Experience Merge Radius: " + expMerge );
+     }
+ 
+@@ -195,11 +195,11 @@ public class SpigotWorldConfig
+         log( "Item Despawn Rate: " + itemDespawnRate );
+     }
+ 
+-    public int animalActivationRange = 32;
+-    public int monsterActivationRange = 32;
++    public int animalActivationRange = 16;
++    public int monsterActivationRange = 24;
+     public int raiderActivationRange = 48;
+-    public int miscActivationRange = 16;
+-    public int activationVerticalRange = 256;
++    public int miscActivationRange = 8;
++    public int activationVerticalRange = 64;
+     public int immunityCheckInterval = 20;
+     public int activeTickSkipInterval = 4;
+     public boolean tickInactiveVillagers = true;
+@@ -218,7 +218,7 @@ public class SpigotWorldConfig
+         log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Vert " + activationVerticalRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
+     }
+ 
+-    public int despawnHardLimit = 128;
++    public int despawnHardLimit = 96;
+     public int despawnSoftLimit = 32;
+     private void despawnRanges()
+     {
+@@ -228,9 +228,9 @@ public class SpigotWorldConfig
+     }
+ 
+     public int playerTrackingRange = 48;
+-    public int animalTrackingRange = 48;
+-    public int monsterTrackingRange = 48;
+-    public int miscTrackingRange = 32;
++    public int animalTrackingRange = 32;
++    public int monsterTrackingRange = 32;
++    public int miscTrackingRange = 16;
+     public int displayTrackingRange = 128;
+     public int otherTrackingRange = 64;
+     private void trackingRange()
