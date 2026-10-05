@@ -1,0 +1,14 @@
+tools/
+work/
+out/
+*.jar
+*.class
+target/
+.idea/
+*.iml
+.vscode/
+logs/
+world*/
+plugins/
+eula.txt
+server.properties
