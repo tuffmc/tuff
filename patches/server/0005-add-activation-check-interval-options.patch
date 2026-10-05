@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 18:47:15 +0200
+Subject: [PATCH] add activation check interval options
+
+
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 0e3f58513..4c653b755 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -244,23 +244,23 @@ public class ActivationRange
+             return true;
+         }
+ 
++        final SpigotWorldConfig config = entity.level().spigotConfig;
+         boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
+ 
+         // Should this entity tick?
+         if ( !isActive )
+         {
+-            if ( ( MinecraftServer.currentTick - entity.activatedTick - 1 ) % 20 == 0 )
++            if ( ( MinecraftServer.currentTick - entity.activatedTick - 1 ) % config.immunityCheckInterval == 0 )
+             {
+                 // Check immunities every 20 ticks.
+                 if ( checkEntityImmunities( entity ) )
+                 {
+-                    // Triggered some sort of immunity, give 20 full ticks before we check again.
+-                    entity.activatedTick = MinecraftServer.currentTick + 20;
++                    entity.activatedTick = MinecraftServer.currentTick + config.immunityCheckInterval;
+                 }
+                 isActive = true;
+             }
+             // Add a little performance juice to active entities. Skip 1/4 if not immune.
+-        } else if ( !entity.defaultActivationState && entity.tickCount % 4 == 0 && !checkEntityImmunities( entity ) )
++        } else if ( !entity.defaultActivationState && config.activeTickSkipInterval > 0 && entity.tickCount % config.activeTickSkipInterval == 0 && !checkEntityImmunities( entity ) )
+         {
+             isActive = false;
+         }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 70b6aeb85..1cbede581 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -200,6 +200,8 @@ public class SpigotWorldConfig
+     public int raiderActivationRange = 48;
+     public int miscActivationRange = 16;
+     public int activationVerticalRange = 256;
++    public int immunityCheckInterval = 20;
++    public int activeTickSkipInterval = 4;
+     public boolean tickInactiveVillagers = true;
+     public boolean ignoreSpectatorActivation = false;
+     private void activationRange()
+@@ -209,6 +211,8 @@ public class SpigotWorldConfig
+         raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
+         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
+         activationVerticalRange = Math.max( 0, getInt( "entity-activation-range.vertical-range", activationVerticalRange ) );
++        immunityCheckInterval = Math.max( 1, getInt( "entity-activation-range.immunity-check-interval", immunityCheckInterval ) );
++        activeTickSkipInterval = Math.max( 0, getInt( "entity-activation-range.active-tick-skip-interval", activeTickSkipInterval ) );
+         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
+         ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
+         log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Vert " + activationVerticalRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
