@@ -1,0 +1,78 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Mon, 5 Oct 2026 19:02:38 +0200
+Subject: [PATCH] add paperspigot info command
+
+
+diff --git a/src/main/java/org/paperspigot/InfoCommand.java b/src/main/java/org/paperspigot/InfoCommand.java
+new file mode 100644
+index 000000000..960380fde
+--- /dev/null
++++ b/src/main/java/org/paperspigot/InfoCommand.java
+@@ -0,0 +1,54 @@
++package org.paperspigot;
++
++import java.lang.management.ManagementFactory;
++import java.util.Arrays;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
++import org.bukkit.World;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++
++public class InfoCommand extends Command
++{
++
++    public InfoCommand(String name)
++    {
++        super( name );
++        this.description = "Shows server version, uptime, tps and memory";
++        this.usageMessage = "/paperspigot";
++        this.setAliases( Arrays.asList( "jules" ) );
++        this.setPermission( "paperspigot.command.info" );
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String currentAlias, String[] args)
++    {
++        if ( !testPermission( sender ) )
++        {
++            return true;
++        }
++
++        sender.sendMessage( ChatColor.GOLD + Bukkit.getName() + " " + ChatColor.GREEN + Bukkit.getVersion() );
++        sender.sendMessage( ChatColor.GOLD + "Uptime: " + ChatColor.GREEN + formatUptime( ManagementFactory.getRuntimeMXBean().getUptime() ) );
++
++        double[] tps = MinecraftServer.getServer().recentTps;
++        sender.sendMessage( ChatColor.GOLD + "TPS (1m): " + ChatColor.GREEN + Math.min( Math.round( tps[0] * 100.0 ) / 100.0, 20.0 ) );
++
++        Runtime rt = Runtime.getRuntime();
++        sender.sendMessage( ChatColor.GOLD + "Memory: " + ChatColor.GREEN + ( ( rt.totalMemory() - rt.freeMemory() ) >> 20 ) + "/" + ( rt.maxMemory() >> 20 ) + " mb" );
++
++        for ( World world : Bukkit.getWorlds() )
++        {
++            sender.sendMessage( ChatColor.GOLD + world.getName() + ": " + ChatColor.GREEN + world.getLoadedChunks().length + " chunks, "
++                    + world.getEntities().size() + " entities, " + world.getPlayers().size() + " players" );
++        }
++        return true;
++    }
++
++    private static String formatUptime(long millis)
++    {
++        long minutes = millis / 60000;
++        return ( minutes / 1440 ) + "d " + ( ( minutes / 60 ) % 24 ) + "h " + ( minutes % 60 ) + "m";
++    }
++}
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 2b4948f0a..9f4c48a81 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -70,6 +70,7 @@ public class SpigotConfig
+ 
+         commands = new HashMap<String, Command>();
+         commands.put( "spigot", new SpigotCommand( "spigot" ) );
++        commands.put( "paperspigot", new org.paperspigot.InfoCommand( "paperspigot" ) );
+ 
+         version = getInt( "config-version", 12 );
+         set( "config-version", 12 );
