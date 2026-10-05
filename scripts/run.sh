@@ -9,4 +9,4 @@ exec java -Xms$mem -Xmx$mem \
     -XX:+DisableExplicitGC -XX:+AlwaysPreTouch \
     -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M \
     -XX:G1ReservePercent=20 -XX:InitiatingHeapOccupancyPercent=15 \
-    -jar "$root/out/paperspigot-$mc.jar" nogui "$@"
+    -jar "$root/out/tuff-$mc.jar" nogui "$@"

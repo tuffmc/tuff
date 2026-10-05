@@ -1,4 +1,4 @@
-# PaperSpigot
+# Tuff
 
 Spigot fork for Minecraft 1.21.11, codename Jules. It sits on top of plain Spigot (Bukkit, CraftBukkit, Spigot from BuildTools), nothing from Paper.
 
@@ -13,7 +13,7 @@ Needs git, curl and Java 21. If you don't have a JDK installed, unpack one into 
     scripts/setup.sh
     scripts/build.sh
 
-setup runs BuildTools and takes a while the first time (around 10-15 min). build applies the patches and puts the jar in `out/paperspigot-1.21.11.jar`.
+setup runs BuildTools and takes a while the first time (around 10-15 min). build applies the patches and puts the jar in `out/tuff-1.21.11.jar`.
 
 To start it:
 

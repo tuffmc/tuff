@@ -8,5 +8,5 @@ cd "$root/work/Spigot"
 sh "$mvn" -q -DskipTests clean install
 
 mkdir -p "$root/out"
-cp Spigot-Server/target/spigot-*-bootstrap.jar "$root/out/paperspigot-$mc.jar"
-echo "built out/paperspigot-$mc.jar"
+cp Spigot-Server/target/spigot-*-bootstrap.jar "$root/out/tuff-$mc.jar"
+echo "built out/tuff-$mc.jar"
