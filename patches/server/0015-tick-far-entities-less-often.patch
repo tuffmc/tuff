@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Tue, 6 Oct 2026 16:45:21 +0200
+Subject: [PATCH] tick far entities less often
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 5335b03e1..85dc6591e 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -375,6 +375,7 @@ public abstract class Entity implements Nameable, EntityAccess, ScoreHolder, Syn
+     public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
+     public final boolean defaultActivationState;
+     public long activatedTick = Integer.MIN_VALUE;
++    public double activationDistSq;
+     public void inactiveTick() { }
+     // Spigot end
+ 
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 4c653b755..d19c182b7 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -44,6 +44,7 @@ public class ActivationRange
+     }
+ 
+     static AABB maxBB = new AABB( 0, 0, 0, 0, 0, 0 );
++    private static Player currentPlayer;
+ 
+     /**
+      * Initializes an entities type on construction to specify what group this
+@@ -140,6 +141,7 @@ public class ActivationRange
+             ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, vertical, animalActivationRange );
+             ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, vertical, monsterActivationRange );
+ 
++            currentPlayer = player;
+             level.getEntities().get(maxBB, ActivationRange::activateEntity);
+         }
+         SpigotTimings.entityActivationCheckTimer.stopTiming();
+@@ -162,7 +164,11 @@ public class ActivationRange
+             if ( entity.activationType.boundingBox.intersects( entity.getBoundingBox() ) )
+             {
+                 entity.activatedTick = MinecraftServer.currentTick;
++                entity.activationDistSq = currentPlayer.distanceToSqr( entity );
+             }
++        } else if ( entity.activatedTick == MinecraftServer.currentTick )
++        {
++            entity.activationDistSq = Math.min( entity.activationDistSq, currentPlayer.distanceToSqr( entity ) );
+         }
+     }
+ 
+@@ -261,6 +267,9 @@ public class ActivationRange
+             }
+             // Add a little performance juice to active entities. Skip 1/4 if not immune.
+         } else if ( !entity.defaultActivationState && config.activeTickSkipInterval > 0 && entity.tickCount % config.activeTickSkipInterval == 0 && !checkEntityImmunities( entity ) )
++        {
++            isActive = false;
++        } else if ( !entity.defaultActivationState && config.farTickSkipInterval > 1 && entity.activationDistSq > config.farActivationRangeSq && entity.tickCount % config.farTickSkipInterval != 0 && !checkEntityImmunities( entity ) )
+         {
+             isActive = false;
+         }
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 874987b03..f7dedf9e6 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -200,6 +200,8 @@ public class SpigotWorldConfig
+     public int raiderActivationRange = 48;
+     public int miscActivationRange = 8;
+     public int activationVerticalRange = 64;
++    public int farActivationRangeSq = 144;
++    public int farTickSkipInterval = 2;
+     public int immunityCheckInterval = 20;
+     public int activeTickSkipInterval = 4;
+     public boolean tickInactiveVillagers = true;
+@@ -213,6 +215,9 @@ public class SpigotWorldConfig
+         activationVerticalRange = Math.max( 0, getInt( "entity-activation-range.vertical-range", activationVerticalRange ) );
+         immunityCheckInterval = Math.max( 1, getInt( "entity-activation-range.immunity-check-interval", immunityCheckInterval ) );
+         activeTickSkipInterval = Math.max( 0, getInt( "entity-activation-range.active-tick-skip-interval", activeTickSkipInterval ) );
++        int farRange = Math.max( 0, getInt( "entity-activation-range.far-range", 12 ) );
++        farActivationRangeSq = farRange * farRange;
++        farTickSkipInterval = Math.max( 0, getInt( "entity-activation-range.far-tick-skip-interval", farTickSkipInterval ) );
+         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
+         ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
+         log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Vert " + activationVerticalRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
