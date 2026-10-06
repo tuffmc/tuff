@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Tue, 6 Oct 2026 16:45:21 +0200
+Subject: [PATCH] lower default view and simulation distance
+
+
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
+index 4fe8ca4e3..0c98a5f28 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServerProperties.java
+@@ -153,8 +153,8 @@ public class DedicatedServerProperties extends Settings<DedicatedServerPropertie
+         this.maxTickTime = this.get("max-tick-time", TimeUnit.MINUTES.toMillis(1L));
+         this.maxChainedNeighborUpdates = this.get("max-chained-neighbor-updates", 1000000);
+         this.rateLimitPacketsPerSecond = this.get("rate-limit", 0);
+-        this.viewDistance = this.getMutable("view-distance", 10);
+-        this.simulationDistance = this.getMutable("simulation-distance", 10);
++        this.viewDistance = this.getMutable("view-distance", 8);
++        this.simulationDistance = this.getMutable("simulation-distance", 6);
+         this.maxPlayers = this.getMutable("max-players", 20);
+         this.networkCompressionThreshold = this.get("network-compression-threshold", 256);
+         this.broadcastRconToOps = this.get("broadcast-rcon-to-ops", true);
