@@ -5,7 +5,7 @@ Subject: [PATCH] add adaptive idle backoff for hoppers
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-index 5d4a0dfb1..1a311a62b 100644
+index 0e2a7ffef..a192ff301 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 @@ -52,6 +52,7 @@ public class HopperBlockEntity extends RandomizableContainerBlockEntity implemen

@@ -1,6 +1,6 @@
 # Tuff
 
-Spigot fork for Minecraft 1.21.11, codename Jules. It sits on top of plain Spigot (Bukkit, CraftBukkit, Spigot from BuildTools), nothing from Paper.
+Spigot fork for Minecraft 26.1, codename Jules. The old 1.21.11 version lives on the `1.21.11` branch. It sits on top of plain Spigot (Bukkit, CraftBukkit, Spigot from BuildTools), nothing from Paper.
 
 This is an independent project. It's not affiliated with SpigotMC, PaperMC, Mojang or Microsoft, so please don't ask them for support with it. Bugs and questions go in the Issues tab here, or email rukivverh@duck.com.
 
@@ -8,12 +8,12 @@ The repo is just patches and a few scripts. The upstream code and the decompiled
 
 ## Building
 
-Needs git, curl and Java 21. If you don't have a JDK installed, unpack one into `tools/jdk` and the scripts will pick it up.
+Needs git, curl and Java 25. If you don't have a JDK installed, unpack one into `tools/jdk25` and the scripts will pick it up.
 
     scripts/setup.sh
     scripts/build.sh
 
-setup runs BuildTools and takes a while the first time (around 10-15 min). build applies the patches and puts the jar in `out/tuff-1.21.11.jar`.
+setup runs BuildTools and takes a while the first time (around 10-15 min). build applies the patches and puts the jar in `out/tuff-26.1.jar`.
 
 To start it:
 
@@ -29,7 +29,7 @@ If you want to change something:
 
     scripts/apply.sh
 
-resets the Spigot-API and Spigot-Server checkouts in `work/Spigot` to the commits in `upstream.txt` and applies the patches. Commit your changes in those folders like normal, then
+resets the Spigot-API and Spigot-Server checkouts in `work-26.1/Spigot` to the commits in `upstream.txt` and applies the patches. Commit your changes in those folders like normal, then
 
     scripts/rebuild.sh
 

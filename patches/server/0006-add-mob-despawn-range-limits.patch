@@ -5,10 +5,10 @@ Subject: [PATCH] add mob despawn range limits
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index ceda86c6e..6d6d65b23 100644
+index 20a92c0a6..951361bb6 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -785,14 +785,14 @@ public abstract class Mob extends LivingEntity implements Targeting, EquipmentUs
+@@ -798,14 +798,14 @@ public abstract class Mob extends LivingEntity implements Targeting, EquipmentUs
  
              if (entity != null) {
                  double d0 = entity.distanceToSqr((Entity) this);

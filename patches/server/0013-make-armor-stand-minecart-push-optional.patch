@@ -5,10 +5,10 @@ Subject: [PATCH] make armor stand minecart push optional
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
-index d367962cf..b4714131a 100644
+index fb5e16d6f..32097166f 100644
 --- a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -202,6 +202,10 @@ public class ArmorStand extends LivingEntity {
+@@ -204,6 +204,10 @@ public class ArmorStand extends LivingEntity {
  
      @Override
      protected void pushEntities() {

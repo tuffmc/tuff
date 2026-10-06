@@ -5,10 +5,10 @@ Subject: [PATCH] add log-join-location option
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index e9e95256e..b7864f6ce 100644
+index 2aa6f163a..d7d5139cf 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -296,7 +296,11 @@ public abstract class PlayerList {
+@@ -295,7 +295,11 @@ public abstract class PlayerList {
          this.server.notificationManager().playerJoined(player);
          servergamepacketlistenerimpl.resumeFlushing();
          // CraftBukkit - Moved from above, added world

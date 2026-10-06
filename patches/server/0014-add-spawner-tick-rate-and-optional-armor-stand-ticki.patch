@@ -5,10 +5,10 @@ Subject: [PATCH] add spawner tick rate and optional armor stand ticking
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
-index b4714131a..21bd430f1 100644
+index 32097166f..c402f6f08 100644
 --- a/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/src/main/java/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -200,6 +200,20 @@ public class ArmorStand extends LivingEntity {
+@@ -202,6 +202,20 @@ public class ArmorStand extends LivingEntity {
      @Override
      protected void doPush(Entity entity) {}
  
