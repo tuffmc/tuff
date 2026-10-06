@@ -39,6 +39,18 @@ jobs:
           name: tuff-${{ steps.v.outputs.mc }}
           path: out/*.jar
 
+      - if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="latest-${{ steps.v.outputs.mc }}"
+          gh release delete "$tag" --cleanup-tag --yes || true
+          gh release create "$tag" out/*.jar \
+            --target "$GITHUB_SHA" \
+            --title "Tuff ${{ steps.v.outputs.mc }}" \
+            --notes "Latest build from $GITHUB_SHA" \
+            --latest=$([ "$GITHUB_REF_NAME" = main ] && echo true || echo false)
+
       - if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
