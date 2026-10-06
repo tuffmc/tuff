@@ -29,13 +29,13 @@ If you want to change something:
 
     scripts/apply.sh
 
-resets the Spigot-API and Spigot-Server checkouts in `work/Spigot` to the commits in `upstream.txt` and applies the patches. Commit your changes in those folders like normal, then
+resets the Spigot-API and Spigot-Server checkouts in `work/Spigot` to the clean BuildTools state (a tag called `tuff-base`) and applies the patches. Commit your changes in those folders like normal, then
 
     scripts/rebuild.sh
 
 writes the commits back out as patch files. Commit those here.
 
-For a newer Spigot version, rerun BuildTools, put the new hashes in `upstream.txt` and run apply.sh again. Expect to fix a patch or two.
+For a newer Spigot version, set `mc` in `upstream.txt`, rerun BuildTools in a fresh work folder and run apply.sh again. Expect to fix a patch or two.
 
 ## License
 

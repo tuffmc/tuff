@@ -1,3 +1,1 @@
 mc=1.21.11
-api=9feabda36befee516a4aae3db420f1e93b6019ff
-server=24e8f53e99e848ea071e1d1348d8fb91f0bf8021
