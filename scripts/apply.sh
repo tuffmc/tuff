@@ -4,7 +4,7 @@ set -e
 
 apply() {
     name=$1 base=$2
-    dir="$root/work/Spigot/Spigot-$name"
+    dir="$work/Spigot/Spigot-$name"
     cd "$dir"
     git am --abort 2>/dev/null || true
     git reset -q --hard "$base"

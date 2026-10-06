@@ -1,5 +1,5 @@
 tools/
-work/
+work-*/
 out/
 *.jar
 *.class
@@ -13,3 +13,4 @@ plugins/
 eula.txt
 server.properties
 run/
+work/
