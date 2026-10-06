@@ -1,0 +1,45 @@
+name: build
+
+on:
+  push:
+    branches: [main, "1.21.11"]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  jar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: v
+        run: |
+          . upstream.txt
+          echo "java=${java:-21}" >> "$GITHUB_OUTPUT"
+          echo "mc=$mc" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.v.outputs.java }}
+
+      - run: |
+          git config --global user.name tuff-ci
+          git config --global user.email ci@users.noreply.github.com
+
+      - run: scripts/setup.sh
+
+      - run: scripts/build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tuff-${{ steps.v.outputs.mc }}
+          path: out/*.jar
+
+      - if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" out/*.jar --clobber
