@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Tue, 6 Oct 2026 16:45:21 +0200
+Subject: [PATCH] halve natural spawn attempt rate
+
+
+diff --git a/src/main/resources/configurations/bukkit.yml b/src/main/resources/configurations/bukkit.yml
+index 71a009169..162a46591 100644
+--- a/src/main/resources/configurations/bukkit.yml
++++ b/src/main/resources/configurations/bukkit.yml
+@@ -39,11 +39,11 @@ chunk-gc:
+     period-in-ticks: 600
+ ticks-per:
+     animal-spawns: 400
+-    monster-spawns: 1
+-    water-spawns: 1
+-    water-ambient-spawns: 1
+-    water-underground-creature-spawns: 1
+-    axolotl-spawns: 1
+-    ambient-spawns: 1
++    monster-spawns: 2
++    water-spawns: 2
++    water-ambient-spawns: 2
++    water-underground-creature-spawns: 2
++    axolotl-spawns: 2
++    ambient-spawns: 2
+     autosave: 6000
+ aliases: now-in-commands.yml
