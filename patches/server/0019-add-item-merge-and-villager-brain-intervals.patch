@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: calvin <rukivverh@duck.com>
+Date: Wed, 7 Oct 2026 17:56:21 +0200
+Subject: [PATCH] add item merge and villager brain intervals
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+index c9656109c..3395acd4e 100644
+--- a/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/ItemEntity.java
+@@ -176,7 +176,7 @@ public class ItemEntity extends Entity implements TraceableEntity {
+             }
+ 
+             boolean flag = Mth.floor(this.xo) != Mth.floor(this.getX()) || Mth.floor(this.yo) != Mth.floor(this.getY()) || Mth.floor(this.zo) != Mth.floor(this.getZ());
+-            int i = flag ? 2 : 40;
++            int i = flag ? this.level().spigotConfig.itemMergeMovingInterval : this.level().spigotConfig.itemMergeStillInterval;
+ 
+             if (this.tickCount % i == 0 && !this.level().isClientSide() && this.isMergable()) {
+                 this.mergeWithNeighbours();
+diff --git a/src/main/java/net/minecraft/world/entity/npc/villager/Villager.java b/src/main/java/net/minecraft/world/entity/npc/villager/Villager.java
+index 42e44b8f6..c78be6aaf 100644
+--- a/src/main/java/net/minecraft/world/entity/npc/villager/Villager.java
++++ b/src/main/java/net/minecraft/world/entity/npc/villager/Villager.java
+@@ -258,7 +258,9 @@ public class Villager extends AbstractVillager implements VillagerDataHolder, Re
+         ProfilerFiller profilerfiller = Profiler.get();
+ 
+         profilerfiller.push("villagerBrain");
+-        this.getBrain().tick(level, this);
++        if (this.tickCount % level.spigotConfig.villagerBrainInterval == 0) {
++            this.getBrain().tick(level, this);
++        }
+         profilerfiller.pop();
+         if (this.assignProfessionWhenSpawned) {
+             this.assignProfessionWhenSpawned = false;
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index f7dedf9e6..4e0e094b7 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -232,6 +232,17 @@ public class SpigotWorldConfig
+         log( "Mob Despawn Range: hard " + despawnHardLimit + " / soft " + despawnSoftLimit );
+     }
+ 
++    public int itemMergeMovingInterval = 4;
++    public int itemMergeStillInterval = 80;
++    public int villagerBrainInterval = 2;
++    private void mergeAndBrain()
++    {
++        itemMergeMovingInterval = Math.max( 1, getInt( "ticks-per.item-merge-moving", itemMergeMovingInterval ) );
++        itemMergeStillInterval = Math.max( 1, getInt( "ticks-per.item-merge-still", itemMergeStillInterval ) );
++        villagerBrainInterval = Math.max( 1, getInt( "ticks-per.villager-brain", villagerBrainInterval ) );
++        log( "Item Merge: moving " + itemMergeMovingInterval + " / still " + itemMergeStillInterval + " Villager Brain: " + villagerBrainInterval );
++    }
++
+     public int spawnerTickRate = 4;
+     public boolean armorStandsTick = true;
+     private void spawnerAndStands()
